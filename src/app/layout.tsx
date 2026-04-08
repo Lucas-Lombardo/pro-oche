@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: "Pro Oche — Your Home. Your Stage.",
   description:
     "The premium all-in-one dart oche setup. LED backlighting, foldable design, full-length throwing mat. Transform any room into a pro darts stage in seconds.",
+  icons: {
+    icon: "/favicon.png",
+  },
   openGraph: {
     title: "Pro Oche — Your Home. Your Stage.",
     description:

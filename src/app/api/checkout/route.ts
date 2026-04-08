@@ -1,7 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+function getBaseUrl(req: NextRequest) {
+  if (process.env.NEXT_PUBLIC_BASE_URL) return process.env.NEXT_PUBLIC_BASE_URL;
+  const proto = req.headers.get("x-forwarded-proto") ?? "https";
+  const host = req.headers.get("host") ?? "localhost:3000";
+  return `${proto}://${host}`;
+}
+
 
 const SHIPPING_OPTIONS = [
   {
@@ -61,7 +67,10 @@ const ALLOWED_COUNTRIES = [
     "CH",
   ];
 
-export async function POST() {
+export async function POST(req: NextRequest) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+  const baseUrl = getBaseUrl(req);
+
   try {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
@@ -74,7 +83,7 @@ export async function POST() {
               description:
                 "Premium all-in-one dart oche with LED lighting, foldable stand & full-length mat",
               images: [
-                `${process.env.NEXT_PUBLIC_BASE_URL}/images/oche-not-deployed.jpg`,
+                `${baseUrl}/images/oche-not-deployed.jpg`,
               ],
             },
             unit_amount: 7000, // £70.00
@@ -86,8 +95,8 @@ export async function POST() {
         allowed_countries: ALLOWED_COUNTRIES as any,
       },
       shipping_options: SHIPPING_OPTIONS as any,
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/#buy`,
+      success_url: `${baseUrl}/success`,
+      cancel_url: `${baseUrl}/#buy`,
     });
 
     return NextResponse.json({ url: session.url });
