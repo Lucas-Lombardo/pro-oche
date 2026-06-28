@@ -477,7 +477,7 @@ button {
 .hero__badge {
   position: absolute;
   left: -18px;
-  bottom: 32px;
+  top: 24px;
   background: #fff;
   border-radius: var(--r-md);
   box-shadow: var(--shadow-md);
